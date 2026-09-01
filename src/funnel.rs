@@ -42,10 +42,9 @@ where
 fn send<F, T, S>(sender: &S, value: F) -> Result<(), SendError<F>>
 where
 	S: Sender<T>,
-	F: Into<T>,
-	T: Into<F>,
+	F: Into<T> + Copy,
 {
 	sender
 		.send(value.into())
-		.map_err(|err| SendError(err.0.into()))
+		.map_err(|_| SendError(value))
 }

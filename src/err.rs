@@ -1,3 +1,8 @@
+//! Error types returned by channel send and receive operations.
+//!
+//! These implementation-agnostic errors allow generic channel code to handle
+//! failures consistently regardless of the underlying channel type.
+
 use std::{
 	error,
 	fmt,

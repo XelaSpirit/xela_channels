@@ -1,16 +1,19 @@
 use std::{
 	error,
 	fmt,
+	fmt::Debug,
 };
 
 #[derive(PartialEq, Eq, Clone, Copy)]
 pub struct SendError<T>(pub T);
 
 impl<T> fmt::Debug for SendError<T>
+where
+	T: Debug,
 {
 	fn fmt(&self, frm: &mut fmt::Formatter<'_>) -> fmt::Result
 	{
-		frm.debug_struct("SendError").finish_non_exhaustive()
+		frm.debug_tuple("SendError").field(&self.0).finish()
 	}
 }
 
@@ -18,12 +21,13 @@ impl<T> fmt::Display for SendError<T>
 {
 	fn fmt(&self, frm: &mut fmt::Formatter<'_>) -> fmt::Result
 	{
-		"sending on a closed channel".fmt(frm)
+		fmt::Display::fmt("sending on a closed channel", frm)
 	}
 }
 
-impl<T> error::Error for SendError<T> {}
+impl<T> error::Error for SendError<T> where T: Debug {}
 
+#[derive(PartialEq, Eq, Clone, Copy)]
 pub enum TrySendError<T>
 {
 	Full(T),
@@ -31,30 +35,32 @@ pub enum TrySendError<T>
 }
 
 impl<T> fmt::Debug for TrySendError<T>
+where
+	T: Debug,
 {
-	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result
+	fn fmt(&self, frm: &mut fmt::Formatter<'_>) -> fmt::Result
 	{
-		match *self
+		match self
 		{
-			| TrySendError::Full(..) => "Full(..)".fmt(f),
-			| TrySendError::Disconnected(..) => "Disconnected(..)".fmt(f),
+			| TrySendError::Full(v) => frm.debug_tuple("Full").field(&v).finish(),
+			| TrySendError::Disconnected(v) => frm.debug_tuple("Disconnected").field(&v).finish(),
 		}
 	}
 }
 
 impl<T> fmt::Display for TrySendError<T>
 {
-	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result
+	fn fmt(&self, frm: &mut fmt::Formatter<'_>) -> fmt::Result
 	{
-		match *self
+		match self
 		{
-			| TrySendError::Full(..) => "sending on a full channel".fmt(f),
-			| TrySendError::Disconnected(..) => "sending on a closed channel".fmt(f),
+			| TrySendError::Full(..) => fmt::Display::fmt("sending on a full channel", frm),
+			| TrySendError::Disconnected(..) => fmt::Display::fmt("sending on a closed channel", frm),
 		}
 	}
 }
 
-impl<T> error::Error for TrySendError<T> {}
+impl<T> error::Error for TrySendError<T> where T: Debug {}
 
 impl<T> From<SendError<T>> for TrySendError<T>
 {
@@ -67,6 +73,7 @@ impl<T> From<SendError<T>> for TrySendError<T>
 	}
 }
 
+#[derive(Debug)]
 pub struct RecvError;
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]

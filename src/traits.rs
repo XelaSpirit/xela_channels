@@ -150,7 +150,7 @@ impl<T> Receiver<T> for mpsc::Receiver<T>
 		mpsc::Receiver::try_recv(self).map_err(|err| {
 			match err
 			{
-				| mpsc::TryRecvError::Empty => TryRecvError::Disconnected,
+				| mpsc::TryRecvError::Empty => TryRecvError::Empty,
 				| mpsc::TryRecvError::Disconnected => TryRecvError::Disconnected,
 			}
 		})

@@ -6,28 +6,6 @@ use std::{
 #[derive(PartialEq, Eq, Clone, Copy)]
 pub struct SendError<T>(pub T);
 
-pub enum TrySendError<T>
-{
-	Full(T),
-	Disconnected(T),
-}
-
-pub struct RecvError;
-
-#[derive(PartialEq, Eq, Clone, Copy, Debug)]
-pub enum TryRecvError
-{
-	Empty,
-	Disconnected,
-}
-
-#[derive(PartialEq, Eq, Clone, Copy, Debug)]
-pub enum RecvTimeoutError
-{
-	Timeout,
-	Disconnected,
-}
-
 impl<T> fmt::Debug for SendError<T>
 {
 	fn fmt(&self, frm: &mut fmt::Formatter<'_>) -> fmt::Result
@@ -45,6 +23,12 @@ impl<T> fmt::Display for SendError<T>
 }
 
 impl<T> error::Error for SendError<T> {}
+
+pub enum TrySendError<T>
+{
+	Full(T),
+	Disconnected(T),
+}
 
 impl<T> fmt::Debug for TrySendError<T>
 {
@@ -81,4 +65,20 @@ impl<T> From<SendError<T>> for TrySendError<T>
 			| SendError(t) => TrySendError::Disconnected(t),
 		}
 	}
+}
+
+pub struct RecvError;
+
+#[derive(PartialEq, Eq, Clone, Copy, Debug)]
+pub enum TryRecvError
+{
+	Empty,
+	Disconnected,
+}
+
+#[derive(PartialEq, Eq, Clone, Copy, Debug)]
+pub enum RecvTimeoutError
+{
+	Timeout,
+	Disconnected,
 }

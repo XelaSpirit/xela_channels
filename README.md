@@ -21,7 +21,7 @@ The package is named `xela_channels`, while its Rust library name is `xch`:
 
 ```toml
 [dependencies]
-xela_channels = "0.1"
+xela_channels = { git = "https://github.com/XelaSpirit/xela_channels.git", branch = "master" }
 ```
 
 **main.rs**

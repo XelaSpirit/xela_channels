@@ -44,7 +44,5 @@ where
 	S: Sender<T>,
 	F: Into<T> + Copy,
 {
-	sender
-		.send(value.into())
-		.map_err(|_| SendError(value))
+	sender.send(value.into()).map_err(|_| SendError(value))
 }
